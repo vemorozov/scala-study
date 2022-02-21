@@ -1,9 +1,11 @@
 package home
 
 
-//todo try another way to create enum
-object Opt extends Enumeration {
-  type option = Value
+sealed trait Opt
 
-  val ShowHidden, FormatLong = Opt
+object Opt {
+  case object ShowHidden extends Opt
+
+  case object FormatLong extends Opt
 }
+
