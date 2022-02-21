@@ -1,4 +1,5 @@
-package ass
+package home
+
 
 //todo try another way to create enum
 object Opt extends Enumeration {
