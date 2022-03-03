@@ -3,49 +3,48 @@ package home
 import model.WcOption.{Bytes, Characters, Lines, Words}
 import model.{Params, WcOption}
 
-import java.nio.file.Path
-import scala.io.Source
+import java.io.File
+import scala.io.{Codec, Source}
 import scala.util.Using
 
 object Wc extends App {
 
-  private val args: Array[String] = Array("-l", "-wc", "/Users/victor/Documents/Work/CV_Morozov_Victor_DataArt.docx")
+  private val arguments: Array[String] = Array("-lwcm", "/Users/victor/Documents/Work/CV_Morozov_Victor_DataArt.docx")
+  private val codec = Codec.ISO8859
+  var previousIsWhitespace = true //use var until figure out how not to
 
-  println(count(getParams(args)))
+  (getParams _ andThen count andThen println) (arguments)
 
-  def count(params: Params[WcOption]) = {
+  //todo: count everything in one iteration
+  def count(params: Params[WcOption]) =
     params.options.map {
-      case WcOption.Words => "w" + countWords(params.path)
-      case WcOption.Characters => "c" + countCharacters(params.path)
-      case WcOption.Lines => "l" + countLines(params.path)
-      case WcOption.Bytes => "b" + countCharacters(params.path)
-    }.mkString("  ")
-  }
+      case Words => countWords(params.path.toFile)
+      case Characters => countBytes(params.path.toFile) //don't know how to count characters, don't care
+      case Lines => countLines(params.path.toFile)
+      case Bytes => countBytes(params.path.toFile)
+    }.mkString("  ") +
+      f"  ${params.path.getFileName}"
 
-  def countWords(path: Path) = {
-    Using(Source.fromFile(path.toFile, "ISO-8859-1" /*todo: extract codec*/)) { reader =>
-      reader.count(char => char.isWhitespace) //fixMe: fix multi-space counting
-    }.get
-  }
 
-  def countLines(path: Path) = {
-    //fixMe: solve OutOfMemory for large lines
-    Using(Source.fromFile(path.toFile, "ISO-8859-1")) { reader => reader.getLines().size }.get
-  }
+  def countLines(file: File) = Using(Source.fromFile(file)(codec))(_.count(_ == '\n')).get
 
-  //todo: is it actually countBytes?
-  def countCharacters(path: Path) = {
-    Using(Source.fromFile(path.toFile, "ISO-8859-1")) { reader => reader.count(_ => true) }.get
-  }
+  def countBytes(file: File) = Using(Source.fromFile(file)(codec))(_.count(_ => true)).get
 
-  def getParams(args: Array[String]) = {
-    Utils.getParams[WcOption](args) {
-      case 'l' => Lines
-      case 'w' => Words
-      case 'c' => Bytes
-      case 'm' => Characters
-    }
-  }
+  def countWords(file: File) = Using(Source.fromFile(file)(codec))(_.count(isWordStart)).get
 
-  case class CountResult(lines: Int = null, words: Int = null, characters: Int = null, bytes: Int = null)
+  def isWordStart(char: Char): Boolean =
+    if (!char.isWhitespace && previousIsWhitespace) {
+      previousIsWhitespace = false
+      true
+    } else if (char.isWhitespace) {
+      previousIsWhitespace = true
+      false
+    } else false
+
+  def getParams(args: Array[String]) = Utils.getParams[WcOption](args) {
+    case 'l' => Lines
+    case 'w' => Words
+    case 'c' => Bytes
+    case 'm' => Characters
+  }
 }
