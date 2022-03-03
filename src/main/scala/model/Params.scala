@@ -1,4 +1,4 @@
-package home
+package home.model
 
 import java.nio.file.Path
 

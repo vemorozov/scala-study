@@ -1,6 +1,7 @@
 package home
 
-import WcOption.{Bytes, Characters, Lines, Words}
+import model.WcOption.{Bytes, Characters, Lines, Words}
+import model.{Params, WcOption}
 
 import java.nio.file.Path
 import scala.io.Source

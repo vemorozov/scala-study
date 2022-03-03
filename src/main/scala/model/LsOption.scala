@@ -1,4 +1,5 @@
 package home
+package model
 
 sealed trait LsOption extends Opt
 

@@ -1,6 +1,7 @@
 package home
 
-import LsOption.{FormatLong, ShowHidden}
+import model.LsOption.{FormatLong, ShowHidden}
+import model.{LsOption, Params}
 
 import java.nio.file.{Files, Path}
 import java.util.stream.Stream

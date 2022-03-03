@@ -1,4 +1,5 @@
 package home
+package model
 
 object WcOption {
   case object Words extends WcOption

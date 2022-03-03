@@ -1,5 +1,7 @@
 package home
 
+import model.{Opt, Params}
+
 import java.nio.file.Path
 
 object Utils {
@@ -10,6 +12,6 @@ object Utils {
       .flatMap(arg => arg.replaceAll("-", ""))
       .map(function)
       .toSet
-    Params[T](options, path)
+    model.Params[T](options, path)
   }
 }
