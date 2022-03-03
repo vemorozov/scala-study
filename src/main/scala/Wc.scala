@@ -8,8 +8,9 @@ import scala.util.Using
 
 object Wc extends App {
 
+  private val args: Array[String] = Array("-l", "-wc", "/Users/victor/Documents/Work/CV_Morozov_Victor_DataArt.docx")
 
-  println(count(getOpts(Array("-l", "-wc", "/Users/victor/Documents/Work/CV_Morozov_Victor_DataArt.docx"))))
+  println(count(getParams(args)))
 
   def count(params: Params[WcOption]) = {
     params.options.map {
@@ -36,17 +37,14 @@ object Wc extends App {
     Using(Source.fromFile(path.toFile, "ISO-8859-1")) { reader => reader.count(_ => true) }.get
   }
 
-  def getOpts(args: Array[String]) = {
-    val pathSpecified = args.nonEmpty && !args.last.contains("-")
-    val path = if (pathSpecified) Path.of(args.last) else Path.of(".")
-    val options: Set[WcOption] = (if (pathSpecified) args.init else args)
-      .flatMap(arg => arg.replaceAll("-", ""))
-      .map {
-        case 'l' => Lines
-        case 'w' => Words
-        case 'c' => Bytes
-        case 'm' => Characters
-      }.toSet
-    Params[WcOption](options, path)
+  def getParams(args: Array[String]) = {
+    Utils.getParams[WcOption](args) {
+      case 'l' => Lines
+      case 'w' => Words
+      case 'c' => Bytes
+      case 'm' => Characters
+    }
   }
+
+  case class CountResult(lines: Int = null, words: Int = null, characters: Int = null, bytes: Int = null)
 }
