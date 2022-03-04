@@ -3,4 +3,4 @@ package model
 
 import java.nio.file.Path
 
-final case class Params[T <: Opt](options: Set[T], path: Path)
+final case class Params(options: Set[Opt], path: Path)

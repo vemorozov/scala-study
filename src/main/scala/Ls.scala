@@ -1,7 +1,7 @@
 package home
 
 import model.LsOption.{FormatLong, ShowHidden}
-import model.{LsOption, Params}
+import model.{Opt, Params}
 
 import java.nio.file.{Files, Path}
 import java.util.stream.Stream
@@ -14,15 +14,15 @@ object Ls {
 
   private def format(files: List[Path]) = files.map(f => f.toFile.getName)
 
-  private def list(params: Params[LsOption]) = filter(Files.list(params.path), params.options)
+  private def list(params: Params) = filter(Files.list(params.path), params.options)
     .iterator().asScala.toList
 
-  private def filter(files: Stream[Path], options: Set[LsOption]) =
+  private def filter(files: Stream[Path], options: Set[Opt]) =
     if (options.contains(ShowHidden)) files
     else files.filter(f => !f.toFile.isHidden)
 
   private def getParams(args: Array[String]) = {
-    Utils.getParams[LsOption](args) {
+    Utils.getParams(args) {
       case 'a' => ShowHidden
       case 'l' => FormatLong
     }

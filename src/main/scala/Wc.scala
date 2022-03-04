@@ -1,7 +1,7 @@
 package home
 
+import model.Params
 import model.WcOption.{Bytes, Characters, Lines, Words}
-import model.{Params, WcOption}
 
 import java.io.File
 import scala.io.{Codec, Source}
@@ -16,7 +16,7 @@ object Wc extends App {
   (getParams _ andThen count andThen println) (arguments)
 
   //todo: count everything in one iteration
-  def count(params: Params[WcOption]) =
+  def count(params: Params) =
     params.options.map {
       case Words => countWords(params.path.toFile)
       case Characters => countBytes(params.path.toFile) //don't know how to count characters, don't care
@@ -41,7 +41,7 @@ object Wc extends App {
       false
     } else false
 
-  def getParams(args: Array[String]) = Utils.getParams[WcOption](args) {
+  def getParams(args: Array[String]) = Utils.getParams(args) {
     case 'l' => Lines
     case 'w' => Words
     case 'c' => Bytes
