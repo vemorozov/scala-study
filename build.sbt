@@ -7,3 +7,10 @@ lazy val root = (project in file("."))
     name := "scala-study",
     idePackagePrefix := Some("home")
   )
+
+val scalaTestVersion = "3.2.11"
+
+libraryDependencies ++=Seq(
+  "org.scalatest" %% "scalatest" % scalaTestVersion,
+  "org.scalatest" %% "scalatest" % scalaTestVersion % "test",
+)
